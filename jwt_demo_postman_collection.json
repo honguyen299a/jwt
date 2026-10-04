@@ -1,0 +1,163 @@
+{
+	"info": {
+		"_postman_id": "a2b3c4d5-e6f7-8901-2345-6789abcdef01",
+		"name": "JWT Authentication API Demo - Bài Thực Hành JWT",
+		"description": "Collection cho bài thực hành xác thực JWT với Node.js Express.\nBao gồm Đăng nhập (Base64/MD5), Sinh Token, Cập nhật Token vào CSDL, Xác thực /auth và Bảo vệ API Hello World.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Đăng nhập - Base64 Password (localhost:3000/)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"if (jsonData.token) {",
+							"    pm.environment.set(\"jwt_token\", jsonData.token);",
+							"    pm.collectionVariables.set(\"jwt_token\", jsonData.token);",
+							"    console.log(\"Saved JWT Token:\", jsonData.token);",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"userName\": \"admin\",\n  \"password\": \"MTIzNDU2\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						""
+					]
+				},
+				"description": "Đăng nhập với tài khoản admin và mật khẩu '123456' đã mã hoá Base64 thành 'MTIzNDU2'. Trả về JWT Token."
+			},
+			"response": []
+		},
+		{
+			"name": "2. Đăng nhập - MD5 Password (localhost:3000/login)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"if (jsonData.token) {",
+							"    pm.environment.set(\"jwt_token\", jsonData.token);",
+							"    pm.collectionVariables.set(\"jwt_token\", jsonData.token);",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"userName\": \"user1\",\n  \"password\": \"e10adc3949ba59abbe56e057f20f883e\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"login"
+					]
+				},
+				"description": "Đăng nhập với tài khoản user1 và mật khẩu '123456' đã mã hoá MD5 thành 'e10adc3949ba59abbe56e057f20f883e'."
+			},
+			"response": []
+		},
+		{
+			"name": "3. API Xác thực Token (localhost:3000/auth)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt_token}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"token\": \"{{jwt_token}}\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/auth",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"auth"
+					]
+				},
+				"description": "API xác thực tính hợp lệ của Token và giải mã cấu trúc Token (Header, Payload, Signature)."
+			},
+			"response": []
+		},
+		{
+			"name": "4. API In 'Hello World' (Bài thực hành số 1 qua JWT Middleware)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt_token}}"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/hello",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"hello"
+					]
+				},
+				"description": "Yêu cầu Bearer Token hợp lệ để in dòng chữ 'Hello World'."
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "jwt_token",
+			"value": ""
+		}
+	]
+}
